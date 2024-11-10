@@ -19,7 +19,7 @@ File.version: "1.0"
 
 Camera.type: "PinHole"
 
-# Camera calibration and distortion parameters (OpenCV) 
+# Camera calibration and distortion parameters (OpenCV)
 Camera1.fx: 4.250258563372763e+02
 Camera1.fy: 4.267976260903337e+02
 Camera1.cx: 3.860151866550880e+02
@@ -43,7 +43,7 @@ Camera2.p2: 8.989607188457415e-05
 Camera.width: 752
 Camera.height: 480
 
-# Camera frames per second 
+# Camera frames per second
 Camera.fps: 10
 
 # Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
@@ -66,16 +66,21 @@ WorldRPY.pitch: 0.0
 WorldRPY.yaw: 1.57079632679
 
 #--------------------------------------------------------------------------------------------
+# System Parameters
+#--------------------------------------------------------------------------------------------
+System.LoopClosing: 1
+
+#--------------------------------------------------------------------------------------------
 # ORB Parameters
 #--------------------------------------------------------------------------------------------
 
 # ORB Extractor: Number of features per image
 ORBextractor.nFeatures: 2000
 
-# ORB Extractor: Scale factor between levels in the scale pyramid 	
+# ORB Extractor: Scale factor between levels in the scale pyramid
 ORBextractor.scaleFactor: 1.2
 
-# ORB Extractor: Number of levels in the scale pyramid	
+# ORB Extractor: Number of levels in the scale pyramid
 ORBextractor.nLevels: 7
 
 # ORB Extractor: Fast threshold
@@ -99,4 +104,3 @@ Viewer.ViewpointY: -1.7
 Viewer.ViewpointZ: 0.8
 Viewer.ViewpointF: -500.0
 Viewer.imageViewScale: 1.0
-
