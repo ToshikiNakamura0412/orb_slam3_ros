@@ -1,5 +1,10 @@
 # ORB-SLAM3-ROS
 
+## Support disabling Loop Closing
+Change setting `System.LoopClosing` in the settings file (e.g. [TUM1.yaml](config/Monocular/TUM1.yaml)) to disable loop closing.
+
+## The rest is the original README.md from the original repository
+
 A ROS implementation of [ORB-SLAM3](https://github.com/UZ-SLAMLab/ORB_SLAM3) V1.0 that focuses on the ROS part.
 
 This package uses ```catkin build```. Tested on Ubuntu 20.04.
@@ -21,7 +26,7 @@ sudo make install
 ### OpenCV
 Check the OpenCV version on your computer (required [at least 3.0](https://github.com/UZ-SLAMLab/ORB_SLAM3)):
 ```
-python3 -c "import cv2; print(cv2.__version__)" 
+python3 -c "import cv2; print(cv2.__version__)"
 ```
 On a freshly installed Ubuntu 20.04.4 LTS with desktop image, OpenCV 4.2.0 is already included. If a newer version is required (>= 3.0), follow [installation instruction](https://docs.opencv.org/4.x/d0/d3d/tutorial_general_install.html) and change the corresponding OpenCV version in `CMakeLists.txt`
 
@@ -103,7 +108,7 @@ roslaunch realsense2_camera rs_t265.launch
 roslaunch orb_slam3_ros rs_t265_stereo_inertial.launch
 ```
 
-### Save and load map 
+### Save and load map
 
 The map file will have `.osa` extension, and is located in the `ROS_HOME` folder (`~/.ros/` by default).
 #### Load map:

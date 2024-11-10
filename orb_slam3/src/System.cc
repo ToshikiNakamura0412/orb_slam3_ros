@@ -106,7 +106,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     }
 
     mStrVocabularyFilePath = strVocFile;
-    
+
     //Load ORB Vocabulary
     cout << endl << "Loading ORB Vocabulary. This could take a while..." << endl;
 
@@ -191,8 +191,22 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
 
     //Initialize the Loop Closing thread and launch
     // mSensor!=MONOCULAR && mSensor!=IMU_MONOCULAR
-    mpLoopCloser = new LoopClosing(mpAtlas, mpKeyFrameDatabase, mpVocabulary, mSensor!=MONOCULAR, activeLC); // mSensor!=MONOCULAR);
-    mptLoopClosing = new thread(&ORB_SLAM3::LoopClosing::Run, mpLoopCloser);
+    bool bLoopClosing = static_cast<int>(fsSettings["System.LoopClosing"]) != 0;
+
+    if (bLoopClosing)
+    {
+        cout << "Enable Loop Closing" << endl;
+
+        mpLoopCloser = new LoopClosing(mpAtlas, mpKeyFrameDatabase, mpVocabulary, mSensor!=MONOCULAR, activeLC); // mSensor!=MONOCULAR);
+
+        mptLoopClosing = new thread(&ORB_SLAM3::LoopClosing::Run, mpLoopCloser);
+    }
+    else
+    {
+        cout << "Disable Loop Closing" << endl;
+        mpLoopCloser = nullptr;
+        mptLoopClosing = nullptr;
+    }
 
     //Set pointers between threads
     mpTracker->SetLocalMapper(mpLocalMapper);
@@ -201,8 +215,11 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     mpLocalMapper->SetTracker(mpTracker);
     mpLocalMapper->SetLoopCloser(mpLoopCloser);
 
-    mpLoopCloser->SetTracker(mpTracker);
-    mpLoopCloser->SetLocalMapper(mpLocalMapper);
+    if (mpLoopCloser)
+    {
+        mpLoopCloser->SetTracker(mpTracker);
+        mpLoopCloser->SetLocalMapper(mpLocalMapper);
+    }
 
     //usleep(10*1000*1000);
 
@@ -212,7 +229,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         mpViewer = new Viewer(this, mpFrameDrawer,mpMapDrawer,mpTracker,strSettingsFile,settings_);
         mptViewer = new thread(&Viewer::Run, mpViewer);
         mpTracker->SetViewer(mpViewer);
-        mpLoopCloser->mpViewer = mpViewer;
+        if (mpLoopCloser) mpLoopCloser->mpViewer = mpViewer;
         mpViewer->both = mpFrameDrawer->both;
     }
 
@@ -506,7 +523,7 @@ void System::Shutdown()
     cout << "Shutdown" << endl;
 
     mpLocalMapper->RequestFinish();
-    mpLoopCloser->RequestFinish();
+    if (mpLoopCloser) mpLoopCloser->RequestFinish();
     /*if(mpViewer)
     {
         mpViewer->RequestFinish();
@@ -1330,12 +1347,12 @@ cv::Mat System::GetCurrentFrame () {
     return mpFrameDrawer->DrawFrame();
 }
 
-Sophus::SE3f System::GetCamTwc() 
+Sophus::SE3f System::GetCamTwc()
 {
     return mpTracker->GetCamTwc();
 }
 
-Sophus::SE3f System::GetImuTwb() 
+Sophus::SE3f System::GetImuTwb()
 {
     return mpTracker->GetImuTwb();
 }
@@ -1584,7 +1601,7 @@ vector<Sophus::SE3f> System::GetAllKeyframePoses()
     sort(vpKFs.begin(), vpKFs.end(), KeyFrame::lId);
 
     vector<Sophus::SE3f> vKFposes;
-    
+
     for(size_t i = 0; i < vpKFs.size(); i++)
     {
         KeyFrame* pKF = vpKFs[i];
@@ -1617,4 +1634,3 @@ bool System::SaveMap(const string &filename)
 }
 
 } //namespace ORB_SLAM
-
